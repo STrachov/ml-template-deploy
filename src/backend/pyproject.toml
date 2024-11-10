@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "joan-up-backend"
+version = "0.1.0"
+description = "Backend of Job Analysis for Upwork"
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = {extras = ["standard"], version = "^0.115.4"}
+pydantic-settings = "^2.6.1"
+sqlmodel = "^0.0.22"
+alembic = "^1.14.0"
+psycopg = {extras = ["binary", "pool"], version = "^3.2.3"}
+passlib = "^1.7.4"
+pyjwt = {extras = ["crypto"], version = "^2.9.0"}
+emails = "^0.6"
+opentelemetry-sdk = "^1.28.0"
+opentelemetry-instrumentation-fastapi = "^0.49b0"
+opentelemetry-exporter-otlp = "^1.28.0"
+elastic-apm = "^6.23.0"
+bcrypt = "^4.2.0"
+
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

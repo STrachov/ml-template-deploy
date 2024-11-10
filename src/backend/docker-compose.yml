@@ -1,0 +1,62 @@
+services:
+
+  pg:
+    image: postgres:12
+#    restart: always
+#    healthcheck:
+#      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+#      interval: 10s
+#      retries: 5
+#      start_period: 30s
+#      timeout: 10s
+    env_file:
+      - .env
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_SERVER=${POSTGRES_SERVER?Variable not set}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
+      - POSTGRES_USER=${POSTGRES_USER?Variable not set}
+      - POSTGRES_DB=${POSTGRES_DB?Variable not set}
+
+    ports:
+      - "5433:5432"
+
+    volumes:
+      - ./data/pgdata:/var/lib/postgresql/data/pgdata  # Mapping host path to container path
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.3
+    restart: always
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.15.3
+    restart: always
+    #user: "0"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+#    volumes:
+#      - /etc/passwd:/etc/passwd:ro
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+
+  apm-server:
+    image: docker.elastic.co/apm/apm-server:8.15.3
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - apm-server.rum.enabled=true
+    ports:
+      - "8200:8200"  # APM Server port for OpenTelemetry to send data
+    depends_on:
+      - elasticsearch
+
+volumes:
+  app-db-data:
+
+
