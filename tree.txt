@@ -1,0 +1,7 @@
+app
+ ├───data
+ ├───notebooks
+ └───src
+     ├───backend
+     ├───frontend
+     └───scrape
