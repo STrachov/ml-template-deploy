@@ -22,7 +22,7 @@ services:
       - "5433:5432"
 
     volumes:
-      - ./data/pgdata:/var/lib/postgresql/data/pgdata  # Mapping host path to container path
+      - ./data/pgdata:/var/lib/postgresql/data/pgdata
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.15.3
@@ -52,9 +52,14 @@ services:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
       - apm-server.rum.enabled=true
     ports:
-      - "8200:8200"  # APM Server port for OpenTelemetry to send data
+      - "8200:8200"
     depends_on:
       - elasticsearch
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8200" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
 volumes:
   app-db-data:

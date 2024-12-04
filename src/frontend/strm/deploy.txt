@@ -1,0 +1,30 @@
+1. Deploy the Streamlit App on an AWS Service
+You can use services like Amazon EC2, AWS Elastic Beanstalk, or Amazon Lightsail to deploy your app. Here’s a quick guide using EC2 as an example:
+
+Set up an EC2 instance:
+Choose an Amazon Machine Image (AMI) that supports Python (e.g., Ubuntu).
+Select an appropriate instance type (e.g., t2.micro for small apps).
+Configure security groups to allow HTTP/HTTPS traffic on port 8501 (Streamlit’s default port).
+Install dependencies on the EC2 instance:
+SSH into the instance, then install Python, Streamlit, and other dependencies.
+Upload your app files (or clone from a Git repository).
+Run the Streamlit app on the EC2 instance:
+Start the app with streamlit run frontend/login.py --server.port 8501 --server.enableCORS false.
+You may want to run the app in a background process, such as using nohup or a process manager like screen.
+2. Configure a Public IP or DNS Name for Easy Access
+Once your app is running on AWS, you’ll have a public IP address or a DNS name associated with the EC2 instance. For example, if your instance’s public IP is 54.123.45.67, users can access the app at http://54.123.45.67:8501.
+
+To provide a more user-friendly link, consider setting up a custom domain with Amazon Route 53 or another DNS provider. This allows you to map your app’s IP to a domain like login.yourapp.com.
+3. Send the Shareable Link
+You can send the direct link to users, e.g., http://your-public-ip-or-domain:8501. If you have a custom domain, this would look like http://login.yourapp.com.
+
+Example of How This Would Work:
+Assuming the app is accessible at http://54.123.45.67:8501:
+
+Send Link: Share http://54.123.45.67:8501 or your custom domain link with other users.
+User Access: When users visit the link, they’ll see the Streamlit-based login form you created.
+Securing the Application
+To protect your application:
+
+Enable HTTPS: Use a reverse proxy like NGINX or set up an SSL certificate for secure HTTPS connections. AWS Load Balancers and CloudFront can help manage SSL for custom domains.
+Authentication: Ensure sensitive routes are protected by requiring login tokens, as your FastAPI backend handles.

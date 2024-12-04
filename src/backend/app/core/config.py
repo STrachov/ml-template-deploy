@@ -30,18 +30,19 @@ class Settings(BaseSettings):
         env_ignore_empty=True,
         extra="ignore",
     )
-    BACKEND_HOST: str = 'localhost'
-    BACKEND_PORT: int = 8080
-    API_V1_STR: str = "/api/v1"
+    BACKEND_HOST: str
+    BACKEND_PORT: int
+    API_V1_STR: str
+
     SECRET_KEY: str = secrets.token_urlsafe(32)
     # 60 minutes * 24 hours * 8 days = 8 days
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 1
     FRONTEND_HOST: str = "http://localhost:5173"
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
 
-    BACKEND_CORS_ORIGINS: Annotated[
-        list[AnyUrl] | str, BeforeValidator(parse_cors)
-    ] = []
+    BACKEND_CORS_ORIGINS: Annotated[list[AnyUrl] | str, BeforeValidator(parse_cors)] = (
+        []
+    )
 
     @computed_field  # type: ignore[prop-decorator]
     @property
@@ -57,7 +58,6 @@ class Settings(BaseSettings):
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str = ""
     POSTGRES_DB: str = ""
-
 
     @computed_field  # type: ignore[prop-decorator]
     @property

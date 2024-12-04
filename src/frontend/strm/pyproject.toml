@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "frontend for joan"
+version = "0.1.0"
+description = "Job offer analyzer"
+authors = ["wwt2008 <wwt2008@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+streamlit = "^1.40.0"
+streamlit-cookies-manager = "^0.2.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

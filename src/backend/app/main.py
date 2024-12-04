@@ -1,4 +1,7 @@
+import logging
+import os
 import uvicorn
+from elasticapm.handlers.logging import LoggingHandler
 from fastapi import FastAPI
 from fastapi.routing import APIRoute
 from starlette.middleware.cors import CORSMiddleware
@@ -8,9 +11,8 @@ from app.core.config import settings
 
 from elasticapm.contrib.starlette import make_apm_client, ElasticAPM
 
-
-
-
+# Configure the main logger
+logging.basicConfig(level=logging.DEBUG)  # Or any other level you want
 
 
 def custom_generate_unique_id(route: APIRoute) -> str:
@@ -33,26 +35,33 @@ if settings.all_cors_origins:
         allow_headers=["*"],
     )
 
+apm_client = make_apm_client(
+    {
+        "SERVICE_NAME": "JOAN Elasticsearch Monitor",
+        "SERVER_URL": "http://localhost:8200",
+        "ENVIRONMENT": "development",
+    }
+)
 
-# Configure the APM client
-apm_config = {
-    'SERVICE_NAME': 'JOAN Elasticsearch Monitor',
-    'SERVER_URL': 'http://localhost:8200',
-    'ENVIRONMENT': 'development',
-    #'SECRET_TOKEN': '',
-}
 
-apm_client = make_apm_client(apm_config)
-
-# Add the Elastic APM middleware
-app.add_middleware(ElasticAPM, client=apm_client)
+logger = logging.getLogger("my_app_logger")
+logger.setLevel(logging.DEBUG)
+if apm_client:
+    # Create an Elastic APM logging handler and add it to the root logger
+    apm_handler = LoggingHandler(client=apm_client)
+    logger.addHandler(apm_handler)
+    logging.getLogger("elasticapm").setLevel(logging.ERROR)
+    # Add the Elastic APM middleware
+    app.add_middleware(ElasticAPM, client=apm_client)
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
+# uvicorn app.main:app --host 127.0.0.1 --port 8080 --reload
+#
 if __name__ == "__main__":
     uvicorn.run(
         "app.main:app",
         reload=True,
-        host='localhost',
-        port=8080,
+        host=settings.BACKEND_HOST,
+        port=settings.BACKEND_PORT,
     )

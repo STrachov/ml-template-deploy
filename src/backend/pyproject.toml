@@ -15,11 +15,10 @@ psycopg = {extras = ["binary", "pool"], version = "^3.2.3"}
 passlib = "^1.7.4"
 pyjwt = {extras = ["crypto"], version = "^2.9.0"}
 emails = "^0.6"
-opentelemetry-sdk = "^1.28.0"
-opentelemetry-instrumentation-fastapi = "^0.49b0"
-opentelemetry-exporter-otlp = "^1.28.0"
 elastic-apm = "^6.23.0"
 bcrypt = "^4.2.0"
+pydantic = "^2.9.2"
+psutil = "^6.1.0"
 
 
 
