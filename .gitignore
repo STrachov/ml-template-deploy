@@ -6,8 +6,6 @@ app.egg-info
 htmlcov
 .cache
 
-.venv
-venv/
 
 .idea/
 src/backend/data/
