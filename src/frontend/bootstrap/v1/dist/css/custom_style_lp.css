@@ -1,0 +1,6 @@
+.hero-section .hero-img-slide {
+  min-width: inherit !important;
+}
+.tutor-slider .badge{
+  --bs-badge-font-size: inherit !important;
+}

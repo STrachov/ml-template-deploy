@@ -34,10 +34,10 @@ if settings.all_cors_origins:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-
+#apm_client = None
 apm_client = make_apm_client(
     {
-        "SERVICE_NAME": "JOAN Elasticsearch Monitor",
+        "SERVICE_NAME": "AI project Elasticsearch Monitor",
         "SERVER_URL": "http://localhost:8200",
         "ENVIRONMENT": "development",
     }

@@ -30,9 +30,9 @@ class Settings(BaseSettings):
         env_ignore_empty=True,
         extra="ignore",
     )
-    BACKEND_HOST: str
-    BACKEND_PORT: int
-    API_V1_STR: str
+    BACKEND_HOST: str = "localhost"
+    BACKEND_PORT: int = 8080
+    API_V1_STR: str = "/api/v1"
 
     SECRET_KEY: str = secrets.token_urlsafe(32)
     # 60 minutes * 24 hours * 8 days = 8 days
@@ -54,9 +54,9 @@ class Settings(BaseSettings):
     PROJECT_NAME: str
     SENTRY_DSN: HttpUrl | None = None
     POSTGRES_SERVER: str
-    POSTGRES_PORT: int = 5432
+    POSTGRES_PORT: int
     POSTGRES_USER: str
-    POSTGRES_PASSWORD: str = ""
+    POSTGRES_PASSWORD: str
     POSTGRES_DB: str = ""
 
     @computed_field  # type: ignore[prop-decorator]

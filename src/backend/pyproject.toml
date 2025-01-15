@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "joan-up-backend"
+name = "ai-template-backend"
 version = "0.1.0"
-description = "Backend of Job Analysis for Upwork"
+description = "Backend of AI template"
 authors = ["Your Name <you@example.com>"]
 readme = "README.md"
 

@@ -1,0 +1,708 @@
+{% extends "_base.html" %}
+{% block content %}
+<div class="card overflow-hidden chat-application">
+<div class="d-flex align-items-center justify-content-between gap-3 m-3 d-lg-none">
+  <button class="btn btn-primary d-flex" type="button" data-bs-toggle="offcanvas" data-bs-target="#chat-sidebar" aria-controls="chat-sidebar">
+    <i class="ti ti-menu-2 fs-5"></i>
+  </button>
+  <form class="position-relative w-100">
+    <input type="text" class="form-control search-chat py-2 ps-5" id="text-srch" placeholder="Search Contact">
+    <i class="ti ti-search position-absolute top-50 start-0 translate-middle-y fs-6 text-dark ms-3"></i>
+  </form>
+</div>
+
+<div class="d-flex">
+
+  <div class="w-100 chat-container">
+    <div class="chat-box-inner-part h-100">
+      <div class="chat-not-selected h-100 d-none">
+        <div class="d-flex align-items-center justify-content-center h-100 p-5">
+          <div class="text-center">
+            <span class="text-primary">
+              <i class="ti ti-message-dots fs-10"></i>
+            </span>
+            <h6 class="mt-2">Open chat from the list</h6>
+          </div>
+        </div>
+      </div>
+      <div class="chatting-box d-block">
+
+        <div class="position-relative overflow-hidden d-flex">
+          <div class="position-relative d-flex flex-grow-1 flex-column">
+            <ul class="flex-row ms-auto">
+              <li>
+                <a class="chat-menu text-dark px-2 fs-7 bg-hover-primary nav-icon-hover position-relative z-index-5" href="javascript:void(0)">
+                  <i class="ti ti-layout-sidebar-right"></i>
+                </a>
+              </li>
+            </ul>
+            <div class="chat-box p-9" style="height: calc(100vh - 200px)" data-simplebar>
+              <div class="chat-list chat active-chat" data-user-id="1">
+                {{ messages_html | safe }}
+              </div>
+            </div>
+            <div class="px-9 py-6 border-top chat-send-message-footer">
+              <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-2 w-85">
+                  <a class="position-relative nav-icon-hover z-index-5" href="javascript:void(0)">
+                    <i class="ti ti-message-chatbot text-dark bg-hover-primary fs-7"></i>
+                  </a>
+                  <textarea class="form-control message-type-box text-muted border-0 p-0 ms-2 autosize" rows="3"></textarea>
+                </div>
+                <ul class="list-unstyledn mb-0 d-flex align-items-center">
+                  <li>
+                    <a class="message-send-btn text-dark px-2 fs-7 bg-hover-primary nav-icon-hover position-relative z-index-5 " href="javascript:void(0)">
+                      <i class="ti ti-send"></i>
+                    </a>
+                  </li>
+
+                  
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="app-chat-offcanvas border-start" style="height: calc(100vh - 155px)" data-simplebar="">
+            <div class="p-3 d-flex align-items-center justify-content-between">
+              <a class="chat-menu d-lg-none d-block text-dark fs-6 bg-hover-primary nav-icon-hover position-relative z-index-5" href="javascript:void(0)">
+                <i class="ti ti-x"></i>
+              </a>
+            </div>
+              <div class="p-9 border-bottom chat-meta-user d-flex align-items-center justify-content-between">
+                      <div class="hstack gap-3 current-chat-user-name">
+                        <div class="position-relative">
+                          <img src="./dist/images/profile/tutor_{{session.tutor.name}}.png" alt="user1" width="48" height="48" class="rounded-circle">
+                        </div>
+                        <div class="">
+                          <h6 class="mb-1 name fw-semibold">{{session.tutor.name}} </h6>
+                          <p class="mb-0">{{session.profession}}</p>
+                        </div>
+                      </div>
+
+                    </div>
+            <div class="session-settings pt-4 flex-shrink-0 border-end d-lg-block position-sticky vh-100 overflow-auto">
+                <h5 class="fs-5 fw-semibold mb-0 mx-4 d-lg-block">Session settings</h5>
+                <ul class="list-group pt-2 border-bottom rounded-0">
+                    <!-- session_name -->
+                    <li class="list-group-item border-0 p-0 mx-4 mb-2">
+                        <label class="control-label col-form-label">Session name</label>
+                        <span class="small">Optionally</span>
+                        <input name="name" type="text" class="session-param form-control" value="{% if session.name is not none %}{{session.name}}{% endif %}">
+                  </li>
+                    <!-- activity_level -->
+<!--                    <li class="list-group-item border-0 p-0 mx-4 mb-2">-->
+<!--                          <label class="control-label col-form-label">Activity level</label>-->
+<!--                          <select class="session-param form-select" name="max_tokens">-->
+<!--                              {% for activity_level in activity_levels.values() %}-->
+<!--                              <option value="{{activity_level.max_tokens}}"-->
+<!--                              {% if session.max_tokens == activity_level.max_tokens %}selected{% endif %}>-->
+<!--                                {{activity_level.full}}-->
+<!--                              </option>-->
+<!--                              {% endfor %}-->
+<!--                          </select>-->
+<!--                    </li>-->
+                    <!-- creativity_level -->
+                    <li class="list-group-item border-0 p-0 mx-4 mb-2">
+                          <label class="control-label col-form-label">Creativity level</label>
+                          <select class="session-param form-select" name="temperature">
+                              {% for creativity_level in creativity_levels.values() %}
+                              <option value="{{creativity_level.temperature}}"
+                              {% if session.temperature == creativity_level.temperature %}selected{% endif %}>
+                                {{creativity_level.full}}
+                              </option>
+                              {% endfor %}
+                          </select>
+                    </li>
+                    <!-- language_level -->
+                    <li class="list-group-item border-0 p-0 mx-4 mb-2">
+                        <label class="control-label col-form-label">Language level</label>
+                        <select class="session-param form-select" name="language_level">
+                          {% for language_level in language_levels.values() %}
+                          <option value="{{language_level.short}}"
+                                  {% if session.language_level == language_level.short %}selected{% endif %}>
+                            {{language_level.full}}
+                          </option>
+                          {% endfor %}
+                        </select>
+                    </li>
+                    <!-- articleUrl -->
+                    <li class="list-group-item border-0 p-0 mx-4 mb-2">
+                            <label class="control-label col-form-label">Article for discussion</label>
+                            <div class="input-group mb-3">
+                              <input id="article-url" name="article_url" type="text" class="form-control" value="{% if session.article_url is not none %}{{session.article_url}}{% endif %}">
+                              <button id="delete-article-btn" class="btn btn-danger" type="button">
+                                x
+                              </button>
+                              <button id="load-article-btn" class="btn btn-info" type="button">
+                                Load
+                              </button>
+                            </div>
+                  </li>
+                    <li id="session_param_alert" class="list-group-item border-0 p-0 mx-4 mb-2"></li>
+                </ul>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="offcanvas offcanvas-start user-chat-box chat-offcanvas" tabindex="-1" id="chat-sidebar" aria-labelledby="offcanvasExampleLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasExampleLabel"> Chats </h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="px-4 pt-9 pb-6">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <div class="d-flex align-items-center">
+          <div class="position-relative">
+            <img src="./dist/images/profile/user-1.jpg" alt="user1" width="54" height="54" class="rounded-circle">
+            <span class="position-absolute bottom-0 end-0 p-1 badge rounded-pill bg-success">
+              <span class="visually-hidden">New alerts</span>
+            </span>
+          </div>
+          <div class="ms-3">
+            <h6 class="fw-semibold mb-2">Mathew Anderson</h6>
+            <p class="mb-0 fs-2">Marketing Director</p>
+          </div>
+        </div>
+
+        <div class="dropdown">
+          <a class="text-dark fs-6 nav-icon-hover " href="javascript:void(0)" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="ti ti-dots-vertical"></i>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item d-flex align-items-center gap-2 border-bottom" href="javascript:void(0)"><span><i class="ti ti-settings fs-4"></i></span>Setting</a></li>
+            <li><a class="dropdown-item d-flex align-items-center gap-2" href="javascript:void(0)"><span><i class="ti ti-help fs-4"></i></span>Help and feadback</a></li>
+            <li><a class="dropdown-item d-flex align-items-center gap-2" href="javascript:void(0)"><span><i class="ti ti-layout-board-split fs-4"></i></span>Enable split View mode</a></li>
+            <li><a class="dropdown-item d-flex align-items-center gap-2 border-bottom" href="javascript:void(0)"><span><i class="ti ti-table-shortcut fs-4"></i></span>Keyboard shortcut</a></li>
+            <li><a class="dropdown-item d-flex align-items-center gap-2" href="javascript:void(0)"><span><i class="ti ti-login fs-4"></i></span>Sign Out</a></li>
+          </ul>
+        </div>
+      </div>
+      <form class="position-relative mb-4">
+        <input type="text" class="form-control search-chat py-2 ps-5" id="text-srh" placeholder="Search Contact">
+        <i class="ti ti-search position-absolute top-50 start-0 translate-middle-y fs-6 text-dark ms-3"></i>
+      </form>
+      <div class="dropdown">
+        <a class="text-muted fw-semibold d-flex align-items-center" href="javascript:void(0)" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          Recent Chats<i class="ti ti-chevron-down ms-1 fs-5"></i>
+        </a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="javascript:void(0)">Sort by time</a></li>
+          <li><a class="dropdown-item border-bottom" href="javascript:void(0)">Sort by Unread</a></li>
+          <li><a class="dropdown-item" href="javascript:void(0)">Hide favourites</a></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+<!--Read message's error review modal window -->
+<div class="modal fade" id="grammarReviewModal" tabindex="-1" aria-labelledby="grammarReviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="white-space: pre-wrap">
+            <div class="modal-header">
+                <h5 class="modal-title" id="grammarReviewModalLabel">Grammar Review</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h5>Original message:</h5>
+                <div id="messageModalDiv" style="max-height: 250px; overflow: auto"></div>
+                <h5>Grammar review:</h5>
+                <div id="reviewModalDiv" style="max-height: 250px; overflow: auto"></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--Article modal window -->
+   <div class="modal fade" id="articleModal" tabindex="-1" aria-labelledby="articleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="articleModalLabel">Article Text</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="height: calc(80vh); overflow: auto">
+                    <div style="white-space: pre-wrap" id="article-text">{% if session.article_text is not none %}{{session.article_text}}{% endif %}</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button id="save-article-btn" type="button" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   <style>
+        #chat-list {
+            max-width: 500px;
+            margin: 20px auto;
+            font-family: Arial, sans-serif;
+        }
+        .tutor-message{
+            white-space: pre-wrap
+        }
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: #fff;
+            border-radius: 8px;
+            position: relative;
+            height: 40px;
+        }
+
+        /* Background GIF styling */
+        .typing-indicator::before {
+            content: '';
+            display: block;
+            width: 30px;
+            height: 30px;
+            background: url('./dist/images/chat/typing.gif') no-repeat center;
+            background-size: contain;
+            margin-right: 10px;
+        }
+
+        /* Typing text */
+        .typing-indicator span {
+            margin-left: 40px; /* Provide space for the background gif */
+            font-style: italic;
+            color: #555;
+        }
+    </style>
+{% endblock content %}
+{% block scripts %}
+<!--  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>-->
+  <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
+<script>
+  document.addEventListener('input', function (event) {
+      if (event.target.classList.contains('autosize')) {
+          autoResize(event.target);
+      }
+  });
+
+  function autoResize(textarea) {
+      textarea.style.height = 'auto'; // Reset the height
+      let newHeight = Math.min(textarea.scrollHeight, parseInt(getComputedStyle(textarea).maxHeight));
+      textarea.style.height = newHeight + 'px';
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const chatList = document.querySelector('.chat-list');
+    const sendButton = document.querySelector('.message-send-btn');
+    const textarea = document.querySelector('.message-type-box');
+    scrollChatBoxBottom()
+    async function sendMessage() {
+        const messageContent = textarea.value.trim();
+
+        if (messageContent === "") {
+            alert("Message cannot be empty!");
+            return;
+        }
+
+        // Create the message data object
+        const messageData = {
+            content: messageContent,
+            created_by: 'user',
+            session_id: {{ session.id }}
+        };
+
+        try {
+            const response = await fetch('/api/v1/messages/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(messageData),
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const newMessageHtml = await response.text();
+            await insertMessageIntoChatList(newMessageHtml);
+            let typingDiv = showTypingIndicator(chatList);
+            await fetchAiResponse(typingDiv);
+
+        } catch (error) {
+            console.error('Error while sending message:', error);
+        }
+
+        // Clear the textarea after sending the message
+        textarea.value = '';
+    }
+   async function fetchAiResponse(typingDiv) {
+     const messageData = {
+          session_id: {{ session.id }}
+        };
+      try {
+        const aiResponse = await fetch('/api/v1/messages/response', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(messageData)
+        });
+        if (!aiResponse.ok) {
+                throw new Error('Network response was not ok');
+        }
+        const messageHtml = await aiResponse.text();
+
+        if (typeof typingDiv !== 'undefined'){
+          removeTypingIndicator(typingDiv);
+        }
+        await insertMessageIntoChatList(messageHtml);
+    } catch (error) {
+        console.error('Error while generating AI response:', error);
+    } finally {
+        textarea.disabled = false;  // Re-enable textarea after AI has finished
+    }
+  }
+    function showTypingIndicator(chatList) {
+        const typingDiv = document.createElement('div');
+        typingDiv.classList.add('typing-indicator');
+        chatList.appendChild(typingDiv);
+        scrollChatBoxBottom()
+        return typingDiv;
+    }
+
+    function  scrollChatBoxBottom(){
+      const element = document.querySelector('.chat-box');
+      const simpleBarInstance = SimpleBar.instances.get(element);
+      if (simpleBarInstance) {
+        simpleBarInstance.getScrollElement().scrollTop = simpleBarInstance.getScrollElement().scrollHeight;
+      }
+    }
+
+    function removeTypingIndicator(typingDiv) {
+        if (typingDiv && typingDiv.parentNode) {
+            typingDiv.parentNode.removeChild(typingDiv);
+        }
+    }
+
+    sendButton.addEventListener('click', (event) => {
+      event.preventDefault();
+      sendMessage();
+
+    });
+
+    // Change height of textarea while text is entering into it or delleting from it
+    textarea.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter' && event.shiftKey) {
+            event.preventDefault();  // Prevent newline and form submission
+            sendMessage();
+        }
+    });
+
+  async function insertMessageIntoChatList(html) {
+      chatList.insertAdjacentHTML('beforeend', html);
+      scrollChatBoxBottom()
+  }
+  function wrapReviewContent(text){
+      let wrapedText = text;
+      return wrapedText
+  }
+  //Handle click by grammar review badge
+  document.body.addEventListener('click', async (event) => {
+    if (event.target.classList.contains('grammar-quality-badge')) {
+        const badge = event.target;
+        const messageId = badge.getAttribute('data-message-id');
+        const messageContent = badge.previousElementSibling.querySelector('.message-content').textContent.trim();
+
+        const reviewContentDiv = badge.previousElementSibling.querySelector('.message-review');
+        let reviewContent = reviewContentDiv.textContent.trim();
+        console.log('initial reviewContent: ', reviewContent);
+        const grammarReviewModal = document.getElementById('grammarReviewModal');
+
+        const reviewModalDiv = grammarReviewModal.querySelector('#reviewModalDiv');
+        const messageModalDiv = grammarReviewModal.querySelector('#messageModalDiv');
+
+        console.log('reviewModalDiv', reviewModalDiv)
+
+        const spinner = grammarReviewModal.querySelector('.spinner-border');
+
+        messageModalDiv.innerHTML = wrapReviewContent(messageContent);
+
+
+        // Show the spinner initially
+        spinner.classList.remove('d-none');
+
+        badge.classList.remove('bg-warning', 'bg-secondary', 'bg-success');
+
+        console.log('reviewContent.trim().length: ', reviewContent.trim().length)
+
+        if(reviewContent.trim().length === 0){
+            spinner.classList.remove('d-none');
+            let reviewContent = "";
+            try {
+                const response = await fetch('/api/v1/messages/check_review', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message_id: messageId, message_content: "" }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const reviewData = await response.json();
+                console.log('reviewData',reviewData)
+
+
+                if (reviewData.status === 'online'){
+                    badge.classList.add('bg-success');
+                    reviewContent = reviewData.content
+                    reviewContentDiv.textContent = reviewContent
+
+                }
+                else if (reviewData.status === 'pending'){
+                    badge.classList.add('bg-warning');
+                    reviewContent = "Review fetching is pending. Please try again in a few seconds."
+
+                }
+
+            } catch (error) {
+                console.error('Error fetching grammar review:', error);
+                reviewContent = 'Error fetching review.';
+                badge.classList.add('bg-warning');
+                reviewContentDiv.textContent = '';
+
+
+            } finally {
+                spinner.classList.add('d-none');
+                reviewModalDiv.innerHTML = wrapReviewContent(reviewContent);
+
+            }
+
+        } else {
+            spinner.classList.add('d-none');
+            reviewModalDiv.innerHTML = wrapReviewContent(reviewContent);
+            badge.classList.add('bg-success');
+
+        }
+    }
+});
+
+// Select the elements about session parameters
+const sessionParamElements = document.querySelectorAll('.session-param');
+// Define the event handler function
+function showAlert(text, mode){
+  const alertHTML = '<div class="alert customize-alert alert-dismissible border-'+mode+' text-'+mode+' fade show remove-close-icon" role="alert">\n' +
+      '                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>\n' +
+      '                      <div class="d-flex align-items-center font-medium me-3 me-md-0">\n' +
+      '                        <i class="ti ti-info-circle fs-5 me-2 text-'+mode+'"></i>\n' +
+                              text +
+      '                      </div>\n' +
+      '                    </div>'
+  const alertElement = document.getElementById('session_param_alert')
+  alertElement.innerHTML = alertHTML
+}
+async function handleChange(event) {
+    const value = event.target.value;
+    const name = event.target.name;
+    // Create the data to be sent in the request
+    const sessionData = {
+        [name]: value,
+        id: {{session.id}}
+    };
+    console.log('session_param', sessionData)
+
+    // Send a POST request to the server with the value
+     try {
+        const response = await fetch('/api/v1/sessions/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(sessionData),
+        });
+        if (!response.ok) {
+            showAlert('Network response was not ok', 'danger')
+
+        }
+        else{
+            showAlert('Session parameter was changed properly', 'success')
+        }
+        const sessionParamResponse = await response.json();
+        console.log('sessionParamResponse:', sessionParamResponse);
+
+    } catch (error) {
+        console.error('Error while sending message:', error);
+    }
+}
+
+// Attach the event handler to the input element
+sessionParamElements.forEach(function (element){
+    element.addEventListener('change', handleChange);
+})
+  });
+
+  const chatMenuButton = document.querySelector('.chat-menu');
+  const chatMenu = document.querySelector('.app-chat-offcanvas');
+  chatMenuButton.addEventListener('click', function (){
+      chatMenu.classList.toggle('app-chat-right')
+  })
+</script>
+
+<script>
+    let converter = new showdown.Converter();
+// Function to process a single div
+function processTutorMessage(div) {
+  const originalContent = div.innerHTML;
+  div.innerHTML = converter.makeHtml(originalContent);
+}
+
+// Function to process all existing and new tutor-message divs
+function processTutorMessages() {
+  const tutorMessages = document.querySelectorAll('.tutor-message');
+  tutorMessages.forEach(processTutorMessage);
+}
+
+// Initial processing of existing tutor-message divs
+//processTutorMessages();
+
+    var articleData={
+    articleUrl: document.getElementById('article-url').value ,
+    articleText: document.getElementById('article-text').textContent
+    }
+    console.log("articleData", articleData)
+    //Handling save article changes
+    document.getElementById('save-article-btn').addEventListener('click', async function() {
+        showSpinner();
+            const articleText = document.getElementById('article-text').textContent;
+            const articleURL = document.getElementById('article-url').value;
+            if(articleData.articleUrl !== articleURL){
+                var articleSaveData = {
+                    article_url: articleURL,
+                    article_text: articleText,
+                    id: {{session.id}}
+                }
+                console.log('articleSaveData', articleSaveData)
+                try {
+                    const response = await fetch('/api/v1/sessions/change_article', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(articleSaveData)
+                    });
+
+                    if (!response.ok) {
+                        showAlert('Failed to save the article.', 'danger');
+                    }
+                    showAlert('Article saved successfully!', 'success');
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    showAlert('Failed to save the article. Please try again later.', 'danger');
+
+                }
+            }
+            hideSpinner();
+            bootstrap.Modal.getInstance(document.getElementById('articleModal')).hide();
+        });
+
+//Handling article loads
+  const articleLoadModalDiv = document.getElementById('articleModal');
+  const articleLoadModal = new bootstrap.Modal(articleLoadModalDiv);
+  document.getElementById('load-article-btn').addEventListener('click', async function() {
+      const articleUrl = document.getElementById('article-url').value;
+      const articleLoadModalDiv = document.getElementById('articleModal');
+      const articleTextDiv = articleLoadModalDiv.querySelector('#article-text');
+
+      articleLoadModal.show();
+      articleTextDiv.innerHTML = ''
+      console.log('articleUrl', articleUrl)
+      console.log('articleData', articleData.articleUrl)
+      console.log('articleUrl==articleData.articleUrl', articleUrl===articleData.articleUrl)
+
+            if (articleUrl !== articleData.articleUrl && validateUrl(articleUrl)) {
+                //spinner.classList.remove('d-none')
+                showSpinner();
+                try {
+                    const response = await fetch('/api/v1/sessions/load_article', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            url: articleUrl
+                        })
+                    });
+
+                    if (!response.ok) {
+                        showAlert('Failed to load the article.', 'danger');
+                    }
+
+                    articleTextDiv.innerHTML = await response.text();
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    showAlert('Failed to load the article. Please try again later.', 'danger');
+                }
+                //spinner.classList.add("d-none")
+                hideSpinner();
+            } else {
+                articleTextDiv.innerHTML = articleData.articleText;
+            }
+        });
+
+
+      function validateUrl(url) {
+            const pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+                '((([a-zA-Z\\d]([a-zA-Z\\d-]*[a-zA-Z\\d])*)\\.)+[a-zA-Z]{2,}|'+ // domain name
+                '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+                '(\\:\\d+)?(\\/[-a-zA-Z\\d%_.~+]*)*'+ // port and path
+                '(\\?[;&a-zA-Z\\d%_.~+=-]*)?'+ // query string
+                '(\\#[-a-zA-Z\\d_]*)?$','i'); // fragment locator
+            const forbiddenExtensions = ['.doc', '.docx', '.pdf', '.xls', '.xlsx', '.ppt', '.pptx'];
+
+            try {
+                const urlObj = new URL(url);
+                if (!pattern.test(url)) {
+                    return false;
+                }
+                for (const ext of forbiddenExtensions) {
+                    if (urlObj.pathname.endsWith(ext)) {
+                        return false;
+                    }
+                }
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+
+
+// Set up a MutationObserver to watch for new divs
+const observer = new MutationObserver((mutations) => {
+  mutations.forEach((mutation) => {
+    if (mutation.type === 'childList') {
+      mutation.addedNodes.forEach((node) => {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          if (node.classList.contains('tutor-message')) {
+            processTutorMessage(node);
+          } else {
+            const newTutorMessages = node.querySelectorAll('.tutor-message');
+            newTutorMessages.forEach(processTutorMessage);
+          }
+        }
+      });
+    }
+  });
+});
+
+// Start observing the document body for changes
+//observer.observe(document.body, { childList: true, subtree: true });
+  </script>
+<!--<script src="./dist/js/chat.js"></script>-->
+{% endblock scripts %}
+

@@ -11,4 +11,5 @@ htmlcov
 src/backend/data/
 src/backend/.env
 
+venv/
 *.log
