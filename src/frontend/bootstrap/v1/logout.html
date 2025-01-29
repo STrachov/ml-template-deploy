@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Title -->
+    <title>Logout - AI-powered Service</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="handheldfriendly" content="true" />
+    <meta name="MobileOptimized" content="width" />
+    <meta name="description" content="Logout from AI-powered service" />
+    <meta name="author" content="" />
+    <meta name="keywords" content="Logout, AI-powered service" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/png" href="./dist/images/logos/favicon.ico" />
+    <!-- Core CSS -->
+    <link id="themeColors" rel="stylesheet" href="./dist/css/style.css" />
+</head>
+
+<body>
+    <!-- Preloader -->
+    <div class="preloader">
+        <img src="./dist/images/logos/favicon.ico" alt="loader" class="lds-ripple img-fluid" />
+    </div>
+
+    <!-- Body Wrapper -->
+    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed">
+        <div class="position-relative overflow-hidden radial-gradient min-vh-100">
+            <div class="position-relative z-index-5">
+                <div class="row">
+                    <div class="col-xl-7 col-xxl-8">
+                        <div class="d-none d-xl-flex align-items-center justify-content-center" style="height: calc(100vh - 80px);">
+                            <img src="./dist/images/backgrounds/login-security.svg" alt="Logout Illustration" class="img-fluid" width="500">
+                        </div>
+                    </div>
+                    <div class="col-xl-5 col-xxl-4">
+                        <div class="authentication-logout min-vh-100 bg-body row justify-content-center align-items-center p-4">
+                            <div class="col-sm-8 col-md-6 col-xl-9">
+                                <h2 class="mb-3 fs-5 text-center" id="welcome_message">You are not logged in now.</h2>
+
+                                <!-- Logout Button -->
+                                <button style="display: none"  class="btn btn-danger w-100 py-8 mb-4 rounded-2 logoutButton" id="logout_button">Yes, Logout</button>
+
+                                <div id="session_param_alert"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Spinner Backdrop (Initially Hidden) -->
+    <div id="spinner-backdrop" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 9999; align-items: center; justify-content: center;">
+        <div class="spinner-border text-light" role="status">
+            <span class="visually-hidden">Logging out...</span>
+        </div>
+    </div>
+
+    <!-- Import JavaScript Files -->
+    <script src="./dist/libs/jquery/dist/jquery.min.js"></script>
+    <script src="./dist/libs/simplebar/dist/simplebar.min.js"></script>
+    <script src="./dist/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="./dist/js/app.min.js"></script>
+    <script src="./dist/js/app.init.js"></script>
+    <script src="./dist/js/app-style-switcher.js"></script>
+    <script src="./dist/js/sidebarmenu.js"></script>
+    <script src="./dist/js/custom.js"></script>
+    <script src="./dist/js/logout.js"></script>
+</body>
+</html>

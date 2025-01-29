@@ -1,0 +1,113 @@
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "300:300"
+    volumes:
+      - "./nginx.conf:/etc/nginx/nginx.conf"
+      - "./frontend:/usr/share/nginx/html"  # Mount frontend folder to Nginx root
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - app_network
+
+  pg:
+    image: postgres:12
+    env_file:
+      - .env
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_SERVER=${POSTGRES_SERVER?Variable not set}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
+      - POSTGRES_USER=${POSTGRES_USER?Variable not set}
+      - POSTGRES_DB=${POSTGRES_DB?Variable not set}
+    ports:
+      - "${POSTGRES_PORT?Variable not set}:5432"
+    volumes:
+      - ./backend/data/pgdata:/var/lib/postgresql/data/pgdata
+    networks:
+      - app_network
+
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.3
+    restart: always
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+    networks:
+      - app_network
+
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.15.3
+    restart: always
+    #user: "0"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+#    volumes:
+#      - /etc/passwd:/etc/passwd:ro
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    networks:
+      - app_network
+
+
+  apm-server:
+    image: docker.elastic.co/apm/apm-server:8.15.3
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - apm-server.rum.enabled=true
+    ports:
+      - "8200:8200"
+    depends_on:
+      - elasticsearch
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://apm-server:8200" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - app_network
+
+
+  backend:
+    build:
+      context: ./backend  # Backend build context
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    container_name: fastapi-backend
+    env_file:
+      - .env
+    depends_on:
+      - apm-server
+      - pg
+    networks:
+      - app_network
+
+
+  frontend:
+    build:
+      context: ./frontend  # Frontend build context (ensure this is correct)
+      dockerfile: Dockerfile  # Use the Dockerfile located in the frontend directory
+    ports:
+      - "3000:3000"
+    container_name: nginx-frontend
+    depends_on:
+      - backend
+    networks:
+      - app_network
+
+
+volumes:
+  app-db-data:
+
+networks:
+  app_network:
+

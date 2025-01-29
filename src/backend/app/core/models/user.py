@@ -5,13 +5,11 @@ from datetime import datetime, timezone
 from typing import Optional
 
 from pydantic import EmailStr, ConfigDict
-
 from sqlmodel import Field, Relationship, SQLModel
-from .base import Base
 
 
 # Shared properties
-class UserBase(Base):
+class UserBase(SQLModel):
     email: EmailStr = Field(unique=True, index=True, max_length=255)
     is_active: bool = True
     is_superuser: bool = False
@@ -75,6 +73,7 @@ class Message(SQLModel):
 class Token(SQLModel):
     access_token: str
     token_type: str = "bearer"
+    message: str = None
 
 
 # Contents of JWT token

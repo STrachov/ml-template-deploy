@@ -1,8 +1,21 @@
-from pydantic import ConfigDict
-from sqlmodel import SQLModel, Field
+from sqlalchemy import MetaData
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import declared_attr
 
-class Base(SQLModel):
-    __abstract__ = True  # Ensures SQLModel doesn't create a table for this base class
+from app.core.config import settings
+from app.core.utils import camel_case_to_snake_case
 
-    # Apply the metadata convention for SQLModel if required
-    metadata = SQLModel.metadata
+
+class Base(DeclarativeBase):
+    __abstract__ = True
+
+    metadata = MetaData(
+        naming_convention=settings.db_naming_convention,
+    )
+
+    @declared_attr.directive
+    def __tablename__(cls):
+        return f"{camel_case_to_snake_case(cls.__name__)}s"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+

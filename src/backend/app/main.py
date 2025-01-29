@@ -24,25 +24,46 @@ app = FastAPI(
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
     generate_unique_id_function=custom_generate_unique_id,
 )
-
 # Set all CORS enabled origins
-if settings.all_cors_origins:
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=settings.all_cors_origins,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
-#apm_client = None
+#if settings.all_cors_origins:
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",   # Sometimes needed if using localhost
+        "http://nginx:3000",       # Needed for Docker service name
+    ],
+
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 apm_client = make_apm_client(
     {
         "SERVICE_NAME": "AI project Elasticsearch Monitor",
-        "SERVER_URL": "http://localhost:8200",
+        "SERVER_URL": "http://apm-server:8200",
         "ENVIRONMENT": "development",
     }
 )
+@app.on_event("startup")
+async def check_cors_middleware():
+    cors_config = None
 
+    # Find CORSMiddleware in middleware stack
+    current_middleware = app.middleware_stack
+    while current_middleware:
+        if isinstance(current_middleware, CORSMiddleware):
+            cors_config = current_middleware
+            break  # Found it, no need to continue
+        current_middleware = getattr(current_middleware, "app", None)
+
+    if cors_config:
+        print("✅ CORS Middleware Found!")
+        print("🔍 Allowed Origins:", cors_config.allow_origins)
+    else:
+        print("❌ CORS Middleware NOT Found!")
 
 logger = logging.getLogger("my_app_logger")
 logger.setLevel(logging.DEBUG)
@@ -58,10 +79,10 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 
 # uvicorn app.main:app --host 127.0.0.1 --port 8080 --reload
 #
-if __name__ == "__main__":
-    uvicorn.run(
-        "app.main:app",
-        reload=True,
-        host=settings.BACKEND_HOST,
-        port=settings.BACKEND_PORT,
-    )
+# if __name__ == "__main__":
+#     uvicorn.run(
+#         "app.main:app",
+#         reload=True,
+#         host=settings.BACKEND_HOST,
+#         port=settings.BACKEND_PORT,
+#     )
