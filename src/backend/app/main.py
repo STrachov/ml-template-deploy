@@ -31,8 +31,6 @@ app.add_middleware(
     allow_origins=[
         "http://localhost",
         "http://localhost:3000",
-        "http://127.0.0.1:3000",   # Sometimes needed if using localhost
-        "http://nginx:3000",       # Needed for Docker service name
     ],
 
     allow_credentials=True,
