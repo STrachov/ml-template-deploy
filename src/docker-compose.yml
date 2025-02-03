@@ -2,10 +2,12 @@ services:
   nginx:
     image: nginx:alpine
     ports:
-      - "300:300"
+      - "80:80"
+      - "443:443"
     volumes:
       - "./nginx.conf:/etc/nginx/nginx.conf"
-      - "./frontend:/usr/share/nginx/html"  # Mount frontend folder to Nginx root
+      - "./frontend:/usr/share/nginx/html"
+      - "./ssl:/etc/nginx/ssl"
     depends_on:
       - backend
       - frontend
@@ -94,10 +96,10 @@ services:
 
   frontend:
     build:
-      context: ./frontend  # Frontend build context (ensure this is correct)
-      dockerfile: Dockerfile  # Use the Dockerfile located in the frontend directory
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "81:80"
     container_name: nginx-frontend
     depends_on:
       - backend

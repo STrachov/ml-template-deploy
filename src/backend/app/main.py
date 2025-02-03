@@ -25,18 +25,23 @@ app = FastAPI(
     generate_unique_id_function=custom_generate_unique_id,
 )
 # Set all CORS enabled origins
-#if settings.all_cors_origins:
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "http://localhost",
-        "http://localhost:3000",
-    ],
-
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# allow_origins=[
+#         "http://localhost",
+#         "http://localhost:3000",
+#         "http://localhost:80",
+#         "https://localhost",
+#         "https://localhost:3000",
+#         "https://localhost:80",
+#
+#     ]
+if settings.all_cors_origins:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.all_cors_origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 apm_client = make_apm_client(
     {
