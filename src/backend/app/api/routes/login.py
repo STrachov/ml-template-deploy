@@ -57,35 +57,35 @@ def login_access_token_web(
     response.set_cookie("refresh_token", refresh_token, httponly=True, secure=True, samesite="strict")
     return response
 
-
-@router.post("/login/access-token-web")
-def login_access_token_api(
-    session: SessionDep, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
-) -> JSONResponse:
-    """
-    OAuth2 compatible token login, get an access token for future requests using HTTP only cookies
-    """
-    user = crud.authenticate(
-        session=session, email=form_data.username, password=form_data.password
-    )
-    if not user:
-        raise HTTPException(status_code=400, detail="Incorrect email or password")
-    elif not user.is_active:
-        raise HTTPException(status_code=400, detail="Inactive user")
-
-    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = security.create_access_token(
-        user.id, expires_delta=access_token_expires
-    )
-    response = JSONResponse(content={"message": "Login successful"})
-    response.set_cookie(
-        key="access_token",
-        value=access_token,
-        httponly=True,
-        secure=True,
-        samesite="strict"
-    )
-    return response
+#
+# @router.post("/login/access-token-web")
+# def login_access_token_api(
+#     session: SessionDep, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+# ) -> JSONResponse:
+#     """
+#     OAuth2 compatible token login, get an access token for future requests using HTTP only cookies
+#     """
+#     user = crud.authenticate(
+#         session=session, email=form_data.username, password=form_data.password
+#     )
+#     if not user:
+#         raise HTTPException(status_code=400, detail="Incorrect email or password")
+#     elif not user.is_active:
+#         raise HTTPException(status_code=400, detail="Inactive user")
+#
+#     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+#     access_token = security.create_access_token(
+#         user.id, expires_delta=access_token_expires
+#     )
+#     response = JSONResponse(content={"message": "Login successful"})
+#     response.set_cookie(
+#         key="access_token",
+#         value=access_token,
+#         httponly=True,
+#         secure=True,
+#         samesite="strict"
+#     )
+#     return response
 
 
 @router.post("/refresh-token")
