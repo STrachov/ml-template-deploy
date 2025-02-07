@@ -24,9 +24,6 @@ services:
     container_name: fastapi-backend
     env_file:
       - .env
-    depends_on:
-      - apm-server
-      - pg
     networks:
       - app_network
 
