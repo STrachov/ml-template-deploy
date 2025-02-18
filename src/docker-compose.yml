@@ -22,8 +22,6 @@ services:
     ports:
       - "8080:8080"
     container_name: fastapi-backend
-    env_file:
-      - .env
     networks:
       - app_network
 
