@@ -14,19 +14,36 @@ services:
     networks:
       - app_network
 
+  pg:
+    image: postgres:12
+    env_file:
+      - ./backend/.env
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_SERVER=${POSTGRES_SERVER?Variable not set}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
+      - POSTGRES_USER=${POSTGRES_USER?Variable not set}
+      - POSTGRES_DB=${POSTGRES_DB?Variable not set}
+    ports:
+      - "${POSTGRES_PORT?Variable not set}:5432"
+    volumes:
+      - ./backend/data/pgdata:/var/lib/postgresql/data/pgdata
+    networks:
+      - app_network
 
   backend:
     build:
-      context: ./backend  # Backend build context
+      context: ./backend
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
     container_name: fastapi-backend
     env_file:
       - ./backend/.env
+    depends_on:
+      - pg
     networks:
       - app_network
-
 
   frontend:
     build:
