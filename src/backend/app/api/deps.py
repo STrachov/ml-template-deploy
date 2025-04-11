@@ -46,17 +46,23 @@ def get_current_user_bearer(session: SessionDep, token: TokenDep) -> User:
     return user
 
 
-
 def get_current_user(request: Request, session: SessionDep) -> User:
     """
     Extracts the access token from HTTP-only cookies and validates the user.
     """
-    token = request.cookies.get("access_token")  # Get token from cookie
+    token = request.cookies.get("access_token")
 
     if not token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Not authenticated",
+        )
+
+    # Check if token is blacklisted
+    if security.is_token_blacklisted(session, token):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token has been revoked",
         )
 
     try:
