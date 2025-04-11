@@ -97,6 +97,19 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Add CORS middleware
+if settings.all_cors_origins:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.all_cors_origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+# Include the API router
+app.include_router(api_router, prefix=settings.API_V1_STR)
+
 def custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema
@@ -108,6 +121,10 @@ def custom_openapi():
         routes=app.routes,
     )
     
+    # Initialize components if it doesn't exist
+    if "components" not in openapi_schema:
+        openapi_schema["components"] = {}
+        
     # Add security scheme
     openapi_schema["components"]["securitySchemes"] = {
         "OAuth2PasswordBearer": {
